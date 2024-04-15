@@ -27,7 +27,9 @@
         </form>
     </div>
     <div class="friend-container">
-        <!-- Display list of friends here -->
+        <?php
+            echo ""
+        ?>
     </div>
     <div class="chat-container">
         <!-- Display chat history and send message form here -->

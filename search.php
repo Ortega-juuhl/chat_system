@@ -15,6 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $searchUserID = $row['user_id'];
         $_SESSION['friend_request_user_id'] = $row['user_id'];
 
+        echo "Search result for " . $search. ":" . "<br>";
         echo "Username:" . $row['username'] . "<br>";
         echo "Status:" . $row['online_status'];
 
