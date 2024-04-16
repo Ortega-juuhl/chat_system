@@ -2,9 +2,15 @@
 session_start();
 include 'db_connect.php';
 
-if (!isset($_SESSION['user_id'])) {
-    echo '<script>alert("You need to login before you can use the chat system."); window.location.href = "login.html";</script>';
-    exit; // Stop further execution if user is not logged in
+if (isset($_SESSION['user_id'])) {
+    // User is logged in, update online status to 'online'
+    $user_id = $_SESSION['user_id'];
+    $updateStatusQuery = "UPDATE Users SET online_status = 'online' WHERE user_id = $user_id";
+    $conn->query($updateStatusQuery);
+} else {
+    // User is not logged in, update online status to 'offline'
+    $updateStatusQuery = "UPDATE Users SET online_status = 'offline'";
+    $conn->query($updateStatusQuery);
 }
 
 $user_id = $_SESSION['user_id'];
@@ -15,26 +21,42 @@ $selectNamesQuery = "SELECT Users.name
                      INNER JOIN FriendRequests ON Users.user_id = FriendRequests.sender_id 
                      WHERE FriendRequests.status = 'accepted'";
 
-$result = $conn->query($selectNamesQuery);
+$checkFriendRequest = "SELECT Users.user_id 
+                       FROM Users 
+                       INNER JOIN FriendRequests ON Users.user_id = FriendRequests.receiver_id 
+                       WHERE FriendRequests.status = 'pending'";
 
-if (!$result) {
-    die("Error executing query: " . $conn->error);
-}
+$resultSelectFriend = $conn->query($selectNamesQuery);
+$resultFriendRequestCheck = $conn->query($checkFriendRequest);
+
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat System</title>
+    <script src="https://kit.fontawesome.com/9e81387435.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class ="navbar">
         <p>Friend requests</p>
+        <?php if ($resultFriendRequestCheck->num_rows > 0) {
+        echo "<i class='fa-solid fa-bell'></i>";
+         }
+        ?>
         <p>User settings</p>
         <p>Faq</p>
     </div>
+
+    <?php 
+    $displayName = "SELECT username FROM users WHERE user_id = $user_id";
+    $resultDisplayName = $conn->query($displayName);
+    $row = $resultDisplayName->fetch_assoc();
+    $username = $row['username'];
+    echo "Welcome back, $username.";
+    ?>
+
     <div class="search-container">
         <form action="search.php" method="post">
             <input type="text" placeholder="Search for people" name="search">
@@ -43,8 +65,8 @@ if (!$result) {
     </div>
     <div class="friend-container">
         <?php 
-            if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc());
+            if ($resultSelectFriend->num_rows > 0) {
+            while ($row = $resultSelectFriend->fetch_assoc());
                 echo $row['name'];
         } else {
             echo "You don't have any friends yet.";
