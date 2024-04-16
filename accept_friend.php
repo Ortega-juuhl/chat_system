@@ -1,16 +1,17 @@
 <?php
-session_start()
+include 'db_connect.php';
+session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_ID = $_SESSION['user_id'];
-    $change_status = "UPDATE FriendRequests SET status = 'accepted' WHERE reciver_id = $user_ID";
+    $request_id = $_POST['request_id'];
+    $change_status = "UPDATE friendrequests SET status = 'accepted' WHERE request_id = $request_id";
 
     if ($conn->query($change_status) === TRUE) {
-        echo '<script>alert("Successful accepted friend request."); window.location.href = "friend.php.php";</script>';
+        echo '<script>alert("Successful accepted friend request."); window.location.href = "friend.php";</script>';
     } else {
-        echo '<script>alert("An error occurred while trying to accepting friend request, please try again."); window.location.href = "friend.php.php";</script>';
+        echo '<script>alert("An error occurred while trying to accept friend request, please try again."); window.location.href = "friend.php";</script>';
     }
 } else {
     echo "Error accepting friend request: Invalid request method.";
 }
-
 ?>

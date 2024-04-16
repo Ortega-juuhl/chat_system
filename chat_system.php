@@ -40,13 +40,13 @@ $resultFriendRequestCheck = $conn->query($checkFriendRequest);
 </head>
 <body>
     <div class ="navbar">
-        <p>Friend requests</p>
+        <a href="friend.php">Friend requests</a>
         <?php if ($resultFriendRequestCheck->num_rows > 0) {
         echo "<i class='fa-solid fa-bell'></i>";
          }
         ?>
-        <p>User settings</p>
-        <p>Faq</p>
+        <a href="user_settings.php">user settings</a>
+        <a href="logout.php">Logout</a>
     </div>
 
     <?php 
@@ -54,7 +54,7 @@ $resultFriendRequestCheck = $conn->query($checkFriendRequest);
     $resultDisplayName = $conn->query($displayName);
     $row = $resultDisplayName->fetch_assoc();
     $username = $row['username'];
-    echo "Welcome back, $username.";
+    echo "Welcome back, $username!";
     ?>
 
     <div class="search-container">
@@ -66,8 +66,10 @@ $resultFriendRequestCheck = $conn->query($checkFriendRequest);
     <div class="friend-container">
         <?php 
             if ($resultSelectFriend->num_rows > 0) {
-            while ($row = $resultSelectFriend->fetch_assoc());
-                echo $row['name'];
+                echo "Friends: <br> <br>";
+            while ($row = $resultSelectFriend->fetch_assoc()) {
+                echo $row['name'] . "<br>" . "<br>";
+            };
         } else {
             echo "You don't have any friends yet.";
         }

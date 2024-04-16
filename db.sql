@@ -28,3 +28,17 @@ CREATE TABLE FriendRequests (
     FOREIGN KEY (sender_id) REFERENCES Users(user_id),
     FOREIGN KEY (receiver_id) REFERENCES Users(user_id)
 );
+
+-- Updated Friends Table with is_typing column
+CREATE TABLE Friends (
+    friendship_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    friend_id INT NOT NULL,
+    is_typing BOOLEAN DEFAULT FALSE,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (friend_id) REFERENCES Users(user_id),
+    CONSTRAINT unique_friendship UNIQUE (user_id, friend_id)
+);
+
+-- du må endre slik at venner blir adda til friend table. endre fra echo status accepted til den fra friend table
