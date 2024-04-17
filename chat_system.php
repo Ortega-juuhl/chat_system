@@ -8,28 +8,23 @@ if (isset($_SESSION['user_id'])) {
     $updateStatusQuery = "UPDATE Users SET online_status = 'online' WHERE user_id = $user_id";
     $conn->query($updateStatusQuery);
 } else {
-    // User is not logged in, update online status to 'offline'
+    // User is not logged in, update online status to 'offline' for all users
     $updateStatusQuery = "UPDATE Users SET online_status = 'offline'";
     $conn->query($updateStatusQuery);
 }
 
 $user_id = $_SESSION['user_id'];
 
-// SQL query to fetch all names from Users table where there are rows in FriendRequests table with status 'accepted'
-$selectNamesQuery = "SELECT Users.name 
-                     FROM Users 
-                     INNER JOIN FriendRequests ON Users.user_id = FriendRequests.sender_id 
-                     WHERE FriendRequests.status = 'accepted'";
-
-$checkFriendRequest = "SELECT Users.user_id 
+// SQL query to fetch names of friends of the current user
+$selectFriendsQuery = "SELECT Users.name 
                        FROM Users 
-                       INNER JOIN FriendRequests ON Users.user_id = FriendRequests.receiver_id 
-                       WHERE FriendRequests.status = 'pending'";
+                       INNER JOIN Friends ON Users.user_id = Friends.friend_id 
+                       WHERE Friends.user_id = $user_id AND Users.user_id != $user_id";
 
-$resultSelectFriend = $conn->query($selectNamesQuery);
-$resultFriendRequestCheck = $conn->query($checkFriendRequest);
+$resultSelectFriends = $conn->query($selectFriendsQuery);
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,19 +34,23 @@ $resultFriendRequestCheck = $conn->query($checkFriendRequest);
     <script src="https://kit.fontawesome.com/9e81387435.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class ="navbar">
+    <div class="navbar">
         <a href="friend.php">Friend requests</a>
-        <?php if ($resultFriendRequestCheck->num_rows > 0) {
-        echo "<i class='fa-solid fa-bell'></i>";
-         }
+        <?php 
+        // Check if there are pending friend requests
+        $checkFriendRequest = "SELECT * FROM FriendRequests WHERE receiver_id = $user_id AND status = 'pending'";
+        $resultFriendRequestCheck = $conn->query($checkFriendRequest);
+        if ($resultFriendRequestCheck->num_rows > 0) {
+            echo "<i class='fa-solid fa-bell'></i>";
+        }
         ?>
-        <a href="user_settings.php">user settings</a>
+        <a href="user_settings.php">User settings</a>
         <a href="logout.php">Logout</a>
     </div>
 
     <?php 
-    $displayName = "SELECT username FROM users WHERE user_id = $user_id";
-    $resultDisplayName = $conn->query($displayName);
+    $displayNameQuery = "SELECT username FROM Users WHERE user_id = $user_id";
+    $resultDisplayName = $conn->query($displayNameQuery);
     $row = $resultDisplayName->fetch_assoc();
     $username = $row['username'];
     echo "Welcome back, $username!";
@@ -63,19 +62,20 @@ $resultFriendRequestCheck = $conn->query($checkFriendRequest);
             <input type="submit" value="submit">
         </form>
     </div>
+    
     <div class="friend-container">
         <?php 
-            if ($resultSelectFriend->num_rows > 0) {
-                echo "Friends: <br> <br>";
-            while ($row = $resultSelectFriend->fetch_assoc()) {
+        if ($resultSelectFriends->num_rows > 0) {
+            echo "Friends: <br> <br>";
+            while ($row = $resultSelectFriends->fetch_assoc()) {
                 echo $row['name'] . "<br>" . "<br>";
-            };
+            }
         } else {
             echo "You don't have any friends yet.";
         }
-                    
         ?>
     </div>
+    
     <div class="chat-container">
         <!-- Display chat history and send message form here -->
         <div class="chat-history">

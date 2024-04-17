@@ -1,4 +1,5 @@
 <?php
+#kung fu panda er drit bra
 session_start();
 include 'db_connect.php';
 $friend_request_user_id = $_SESSION['friend_request_user_id'];
