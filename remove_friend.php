@@ -20,4 +20,6 @@ if (!isset($_SESSION['user_id'])) {
         echo '<script>alert("Could not remove friend, please try again later."); window.location.href = "chat_system.php";</script>';
     }
 }
+
+// need to fix the remove friend cause I only get error....... :(((())))
 ?>
