@@ -15,9 +15,9 @@ if(isset($_SESSION['friend_request_user_id'])) {
     $addFriend = "INSERT INTO FriendRequests (sender_id, receiver_id) VALUES ($user_ID, $friend_request_user_id)";
 
     if ($conn->query($addFriend) === TRUE) { 
-        echo '<script>alert("Friend request sent successfully."); window.location.href = "chat_system.php";</script>';
+        echo '<script>alert("Friend request sent successfully."); window.location.href = "index.php";</script>';
     } else {
-        echo '<script>alert("Friend request failed."); window.location.href = "chat_system.php";</script>';
+        echo '<script>alert("Friend request failed."); window.location.href = "index.php";</script>';
 
     }
 } else {

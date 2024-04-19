@@ -2,11 +2,6 @@
 session_start();
 include 'db_connect.php';
 
-if (!isset($_SESSION['user_id'])) {
-    echo '<script>alert("You need to login before you can use the chat system."); window.location.href = "login.html";</script>';
-    exit; // Stop further execution if user is not logged in
-}
-
 $user_id = $_SESSION['user_id'];
 
 // Check if form was submitted

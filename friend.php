@@ -32,5 +32,7 @@ if ($result->num_rows > 0) {
     }
 } else {
     echo "You don't have any pending friend requests.";
+    echo "<a href='index.php'><button>Home</button></a>";
+
 }
 ?>
