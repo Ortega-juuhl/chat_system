@@ -9,4 +9,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $send_message = "INSERT INTO Messages (sender_id, reciver_id, content) VALUES ($user_id, $, $message )"
 }
-?>
+?>wadawdad
